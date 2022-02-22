@@ -1,4 +1,14 @@
+from sys import getsizeof
 from Tree import Tree
+
+def count_keys(dict_, counter=0):
+    for each_key in dict_:
+        if isinstance(dict_[each_key], dict):
+            counter = count_keys(dict_[each_key], counter + 1)
+        else:
+            counter += 1
+    return counter
+
 
 class Program():
     def __init__(self):
@@ -25,23 +35,52 @@ class Program():
                 while(True):
                     node = input("Nó:")
 
+                    if (node == ""):
+                        node = None
+
                     if (node != "-1"):
                         if (len(_tree) == 0):
                             _tree[node] = {}
                         else:
-                            def add(d):
-                                aux = None
-                                for key, value in d.items():
-                                    if (aux != None and aux != key):
-                                        break
-                                    aux = key
-                                    if (len(value) != 2):
-                                        d[key][node] = {}
-                                    else:
-                                        yield from add(value)
+                            def add(d, l):
+                                if (isinstance(d, str) and not(node in list(l))):
+                                    c = list(l.copy())
+                                    global p
+                                    if (count_keys(l[c[0]]) == 2):
+                                        p = c.pop(0)
 
-                            for i in add(_tree):
-                                print(i)
+                                    if (count_keys(l[c[0]]) < 2):
+                                        l[c[0]][node] = {}
+                                    else:
+                                        if (p != None):
+                                            _iter = iter(l[p])
+
+                                            while (True):
+                                                try:
+                                                    l[p][next(_iter)][node] = {}
+                                                    break
+                                                except StopIteration:
+                                                    add(node, l[p])
+                                                    break
+
+                                else:
+                                    if (l != None and node in list(l)):
+                                        pass
+                                    else:
+                                        for key, value in d.items():
+                                            if (isinstance(value, dict)):
+                                                if (count_keys(value) < 2):
+                                                    if (None in value):
+                                                        del value[None]
+                                                    value[node] = {}
+
+                                                else:
+                                                    if (None in value):
+                                                        del value[None]
+                                                        value[node] = {}
+                                                    else:
+                                                        add(node, value)
+                            add(_tree, None)
 
                     if (node == "-1"):
                         break
@@ -74,8 +113,10 @@ class Program():
                     print(i, end=" ")
 
             elif (opt == 6):
-                print(_tree)
-                tree.generateGraph()
+                try:
+                    tree.generateGraph()
+                except:
+                    pass
 
             elif (opt == 7):
                 node = input("Nó:")
