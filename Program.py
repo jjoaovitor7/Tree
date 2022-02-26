@@ -40,11 +40,22 @@ class Node:
             for child in self.children:
                 child.preorder()
 
+    def subtree(self, target, tree):
+        if (tree.get_root().data == target):
+            tree.get_root().preorder()
+        else:
+            if (len(self.children) >= 0):
+                for child in self.children:
+                    if (child.data == target):
+                        child.preorder()
+                    else:
+                        child.subtree(target, tree)
+
 
 def add_recursive(nA, nB):
     try:
         while True:
-            nFSS = Node(input(f"Nó Filho de {nA.data}\n:"))
+            nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
             if (nFSS.data == "-1"):
                 break
 
@@ -63,16 +74,16 @@ class Tree:
     def __init__(self):
         self.root = None
 
-    def setRoot(self):
+    def set_root(self):
         self.root = Node(input("Nó Raiz\n:"))
 
-    def getRoot(self):
+    def get_root(self):
         return self.root
 
     def generate(self):
         try:
             while True:
-                n = Node(input("Nó Filho\n:"))
+                n = Node(input(f"Nó Filho de {self.root.data}\n:"))
                 if (n.data == "-1"):
                     break
                 nodes.append((self.root.data, n.data))
@@ -89,23 +100,26 @@ class Program:
 
     def run(self):
         t = Tree()
-        t.setRoot()
+        t.set_root()
         t.generate().preorder()
 
         try:
             g.add_edges_from(nodes)
 
-            pos = EoN.hierarchy_pos(g, t.getRoot().data)
+            pos = EoN.hierarchy_pos(g, t.get_root().data)
             nx.draw(g, pos=pos, with_labels=True)
             plt.draw()
             plt.show()
         except TypeError as e:
             pass
 
-        print(f"\nNó Raiz: \n{t.getRoot().data}")
+        print(f"\nNó Raiz: \n{t.get_root().data}")
         print("\nNós Folhas:")
         for i in nodesLeaf:
             print(i, end=" ")
+
+        subTree = input("\nSub Árvore do Nó\n:")
+        t.get_root().subtree(subTree, t)
 
 
 if __name__ == "__main__":
