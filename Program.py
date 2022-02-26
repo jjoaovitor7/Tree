@@ -1,37 +1,67 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import networkx as nx
 import EoN
 
+# NÓS FOLHAS
 nodesLeaf = []
+
+# ARRAY DE TUPLAS PARA REPRESENTAÇÃO GRÁFICO DO NÓ.
 nodes = []
+
+# REPRESENTAÇÃO GRÁFICO DO NÓ.
 g = nx.Graph()
 
 
 class Node:
     def __init__(self, data):
+        """
+        CONSTRUTOR DA CLASSE.
+        """
         self.data = data
         self.children = []
         self.parent = None
         self.degree = 0
 
     def add_child(self, child):
+        """
+        FUNÇÃO RESPONSÁVEL POR ADICIONAR FILHOS AO NÓ.
+        O PAI DO NÓ SERÁ O NÓ BASE A ELE
+        POR ISSO 'child.parent = self', EM OUTRAS PALAVRAS
+        É PEGO O NÓ BASE E É COLOCADO COMO PAI DO NÓ ATUAL.
+        """
         child.parent = self
         self.children.append(child)
+
+        # O GRAU É DETERMINADO PELA QUANTIDADE DE FILHOS QUE O NÓ APRESENTA.
         self.degree = len(self.children)
 
     def get_level(self):
+        """
+        FUNÇÃO RESPONSÁVEL PELA OBTENÇÃO DO NÍVEL DE CADA NÓ.
+        """
         level = 0
         p = self.parent
 
+        # ENQUANTO O NÓ ANTERIOR TIVER ALGUM NÓ BASE ANTES DELE
+        # O NÍVEL É INCREMENTADO
+        # ATÉ QUE NÃO APRESENTE MAIS NENHUM NÓ BASE ANTES DELE.
         while p:
             level += 1
             p = p.parent
+
+        # SE NÃO TIVER MAIS NENHUM NÓ BASE, RETORNE O LEVEL.
         return level
 
     def preorder(self):
+        """
+        FUNÇÃO RESPONSÁVEL POR PRINTAR A ÁRVORE EM PRÉ-ORDEM.
+        """
         spaces = " " * self.get_level()
         prefix = spaces + "|_" if self.parent != None else ""
 
+        # caso
         if (self.degree == 0):
             nodesLeaf.append(self.data)
 
@@ -41,6 +71,7 @@ class Node:
                 child.preorder()
 
     def subtree(self, target, tree):
+        """FUNÇÃO RESPONSÁVEL POR PRINTAR A SUBÁRVORE DE UM DETERMINADO NÓ."""
         if (tree.get_root().data == target):
             tree.get_root().preorder()
         else:
@@ -53,6 +84,7 @@ class Node:
 
 
 def add_recursive(nA, nB):
+    """FUNÇÃO RESPONSÁVEL PELA ADIÇÃO DE NÓS DE FORMA RECURSIVA"""
     try:
         while True:
             nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
@@ -67,7 +99,8 @@ def add_recursive(nA, nB):
         if (nA == None):
             return
     except KeyboardInterrupt as e:
-        pass
+        # PARA NÃO TER QUE FICAR DIGITANDO -1 TODA HORA.
+        print("")
 
 
 class Tree:
@@ -75,12 +108,15 @@ class Tree:
         self.root = None
 
     def set_root(self):
+        """FUNÇÃO RESPONSÁVEL POR SETAR O NÓ RAIZ."""
         self.root = Node(input("Nó Raiz\n:"))
 
     def get_root(self):
+        """FUNÇÃO RESPONSÁVEL POR OBTER O NÓ RAIZ."""
         return self.root
 
     def generate(self):
+        """FUNÇÃO RESPONSÁVEL PELA ENTRADA DE DADOS E GERAÇÃO DA ÁRVORE."""
         try:
             while True:
                 n = Node(input(f"Nó Filho de {self.root.data}\n:"))
@@ -100,9 +136,14 @@ class Program:
 
     def run(self):
         t = Tree()
+
+        # SETANDO NÓ RAIZ.
         t.set_root()
+
+        # GERANDO ÁRVORE E A PRINTANDO EM PRÉ-ORDEM.
         t.generate().preorder()
 
+        # REPRESENTAÇÃO GRÁFICA.
         try:
             g.add_edges_from(nodes)
 
@@ -113,12 +154,16 @@ class Program:
         except TypeError as e:
             pass
 
+        # NÓ RAIZ.
         print(f"\nNó Raiz: \n{t.get_root().data}")
+
+        # NÓ FOLHAS.
         print("\nNós Folhas:")
         for i in nodesLeaf:
             print(i, end=" ")
 
-        subTree = input("\nSub Árvore do Nó\n:")
+        # SUB ÁRVORE DE DETERMINADO NÓ.
+        subTree = input("\n\nSub Árvore do Nó\n:")
         t.get_root().subtree(subTree, t)
 
 
