@@ -1,4 +1,10 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+import EoN
+
 nodesLeaf = []
+nodes = []
+g = nx.Graph()
 
 
 class Node:
@@ -42,6 +48,8 @@ def add_recursive(nA, nB):
             if (nFSS.data == "-1"):
                 break
 
+            nodes.append((nB.data, nFSS.data))
+
             nB.add_child(nFSS)
             add_recursive(nFSS, nA)
 
@@ -67,6 +75,7 @@ class Tree:
                 n = Node(input("Nó Filho\n:"))
                 if (n.data == "-1"):
                     break
+                nodes.append((self.root.data, n.data))
                 self.root.add_child(n)
                 add_recursive(self.root, n)
             return self.root
@@ -82,6 +91,16 @@ class Program:
         t = Tree()
         t.setRoot()
         t.generate().preorder()
+
+        try:
+            g.add_edges_from(nodes)
+
+            pos = EoN.hierarchy_pos(g, t.getRoot().data)
+            nx.draw(g, pos=pos, with_labels=True)
+            plt.draw()
+            plt.show()
+        except TypeError as e:
+            pass
 
         print(f"\nNó Raiz: \n{t.getRoot().data}")
         print("\nNós Folhas:")
