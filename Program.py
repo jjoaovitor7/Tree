@@ -56,13 +56,20 @@ class Node:
         # SE NÃO TIVER MAIS NENHUM NÓ BASE, RETORNE O LEVEL.
         return level
 
-
     def get_height(self):
+        """FUNÇÃO RESPONSÁVEL POR RETORNAR A ALTURA DO NÓ."""
         l = []
         for c in self.children:
             l.append(c.get_height())
 
-        return 1 + max(l, default=-1)
+        # [] FAZ RETORNAR O DEFAULT (-1), 1 + -1 = 0
+        # l = [0]
+        # DEPOIS DISSO ELE VAI CONSIDERANDO MAX DE l
+        # max(l) = 0, 1 + 0 = 1
+        # max(l) = 1, 1 + 1 = 2
+        # ...
+        height = 1 + max(l, default=-1)
+        return height
 
     def preorder(self):
         """
@@ -71,7 +78,7 @@ class Node:
         spaces = " " * self.get_level()
         prefix = spaces + "|_" if self.parent != None else ""
 
-        # caso
+        # CASO O GRAU DÓ NÓ SEJA 0 ELE É UM NÓ FOLHA.
         if (self.degree == 0):
             nodesLeaf.append(self.data)
 
@@ -81,6 +88,7 @@ class Node:
             for child in self.children:
                 child.preorder()
 
+        # VOLTA DA PILHA DA RECURSÃO (CALL STACK).
         try:
             if (h[0] == -1):
                 global hh
@@ -104,7 +112,7 @@ class Node:
 
 
 def add_recursive(nA, nB):
-    """FUNÇÃO RESPONSÁVEL PELA ADIÇÃO DE NÓS DE FORMA RECURSIVA"""
+    """FUNÇÃO RESPONSÁVEL PELA ADIÇÃO DE NÓS DE FORMA RECURSIVA."""
     try:
         while True:
             nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
