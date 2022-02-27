@@ -4,14 +4,16 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import EoN
 
-# NÓS FOLHAS
+# NÓS FOLHAS.
 nodesLeaf = []
 
-# ARRAY DE TUPLAS PARA REPRESENTAÇÃO GRÁFICO DO NÓ.
+# ARRAY DE TUPLAS PARA REPRESENTAÇÃO GRÁFICA DO NÓ.
 nodes = []
 
-# REPRESENTAÇÃO GRÁFICO DO NÓ.
+# REPRESENTAÇÃO GRÁFICA DO NÓ.
 g = nx.Graph()
+
+h = []
 
 
 class Node:
@@ -54,6 +56,14 @@ class Node:
         # SE NÃO TIVER MAIS NENHUM NÓ BASE, RETORNE O LEVEL.
         return level
 
+
+    def get_height(self):
+        l = []
+        for c in self.children:
+            l.append(c.get_height())
+
+        return 1 + max(l, default=-1)
+
     def preorder(self):
         """
         FUNÇÃO RESPONSÁVEL POR PRINTAR A ÁRVORE EM PRÉ-ORDEM.
@@ -65,19 +75,29 @@ class Node:
         if (self.degree == 0):
             nodesLeaf.append(self.data)
 
-        print(f"{prefix} {self.data} (Nível: {self.get_level()}) (Grau: {self.degree})")
+        print(
+            f"{prefix} {self.data} (Nível | Profundidade: {self.get_level()}) (Grau: {self.degree})")
         if (len(self.children) > 0):
             for child in self.children:
                 child.preorder()
 
+        try:
+            if (h[0] == -1):
+                global hh
+                hh = self.get_height()
+        except IndexError as e:
+            pass
+
     def subtree(self, target, tree):
         """FUNÇÃO RESPONSÁVEL POR PRINTAR A SUBÁRVORE DE UM DETERMINADO NÓ."""
         if (tree.get_root().data == target):
+            h.append(-1)
             tree.get_root().preorder()
         else:
             if (len(self.children) >= 0):
                 for child in self.children:
                     if (child.data == target):
+                        h.append(-1)
                         child.preorder()
                     else:
                         child.subtree(target, tree)
@@ -163,8 +183,13 @@ class Program:
             print(i, end=" ")
 
         # SUB ÁRVORE DE DETERMINADO NÓ.
-        subTree = input("\n\nSub Árvore do Nó\n:")
+        subTree = input("\n\nSub Árvore e Altura do Nó\n:")
+        print(f"\nSub Árvore do Nó {subTree}:\n")
         t.get_root().subtree(subTree, t)
+        try:
+            print(f"\nAltura do Nó {subTree}:\n{hh}")
+        except NameError as e:
+            print("Nó não encontrado.")
 
 
 if __name__ == "__main__":
