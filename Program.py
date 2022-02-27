@@ -68,6 +68,10 @@ class Node:
         # max(l) = 0, 1 + 0 = 1
         # max(l) = 1, 1 + 1 = 2
         # ...
+        # CASO TENHA UM NÓ IRMÃO,
+        # ADICONE o max(l) DO NÓ IRMÃO TAMBÉM AO l
+        # ex. l = [2, 0]
+
         height = 1 + max(l, default=-1)
         return height
 
