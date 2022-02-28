@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import EoN
+import random
 
 # NÓS FOLHAS.
 nodesLeaf = []
@@ -14,6 +15,8 @@ nodes = []
 g = nx.Graph()
 
 h = []
+
+_nu = []
 
 
 class Node:
@@ -93,12 +96,8 @@ class Node:
                 child.preorder()
 
         # VOLTA DA PILHA DA RECURSÃO (CALL STACK).
-        try:
-            if (h[0] == -1):
-                global hh
-                hh = self.get_height()
-        except IndexError as e:
-            pass
+        global hh
+        hh = self.get_height()
 
     def subtree(self, target, tree):
         """FUNÇÃO RESPONSÁVEL POR PRINTAR A SUBÁRVORE DE UM DETERMINADO NÓ."""
@@ -111,6 +110,7 @@ class Node:
                     if (child.data == target):
                         h.append(-1)
                         child.preorder()
+                        print(child.data)
                     else:
                         child.subtree(target, tree)
 
@@ -119,14 +119,19 @@ def add_recursive(nA, nB):
     """FUNÇÃO RESPONSÁVEL PELA ADIÇÃO DE NÓS DE FORMA RECURSIVA."""
     try:
         while True:
-            nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
+            # nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
+            nFSS = Node(random.choice([str(random.randrange(25)), "-1"]))
             if (nFSS.data == "-1"):
                 break
 
-            nodes.append((nB.data, nFSS.data))
+            if (nFSS.data not in _nu):
+                _nu.append(nFSS.data)
+                nodes.append((nB.data, nFSS.data))
 
-            nB.add_child(nFSS)
-            add_recursive(nFSS, nA)
+                nB.add_child(nFSS)
+                add_recursive(nFSS, nA)
+            else:
+                add_recursive(nA, nB)
 
         if (nA == None):
             return
@@ -141,7 +146,13 @@ class Tree:
 
     def set_root(self):
         """FUNÇÃO RESPONSÁVEL POR SETAR O NÓ RAIZ."""
-        self.root = Node(input("Nó Raiz\n:"))
+        # self.root = Node(input("Nó Raiz\n:"))
+
+        self.root = Node(str(random.randrange(25)))
+        if (self.root in _nu):
+            self.set_root()
+        else:
+            _nu.append(self.root.data)
 
     def get_root(self):
         """FUNÇÃO RESPONSÁVEL POR OBTER O NÓ RAIZ."""
@@ -151,12 +162,19 @@ class Tree:
         """FUNÇÃO RESPONSÁVEL PELA ENTRADA DE DADOS E GERAÇÃO DA ÁRVORE."""
         try:
             while True:
-                n = Node(input(f"Nó Filho de {self.root.data}\n:"))
+                # n = Node(input(f"Nó Filho de {self.root.data}\n:"))
+                n = Node(random.choice([str(random.randrange(25)), "-1"]))
+
                 if (n.data == "-1"):
                     break
-                nodes.append((self.root.data, n.data))
-                self.root.add_child(n)
-                add_recursive(self.root, n)
+
+                if (n.data not in _nu):
+                    _nu.append(n.data)
+                    nodes.append((self.root.data, n.data))
+                    self.root.add_child(n)
+                    add_recursive(self.root, n)
+                else:
+                    self.generate()
             return self.root
         except KeyboardInterrupt as e:
             return self.root
@@ -183,8 +201,8 @@ class Program:
             nx.draw(g, pos=pos, with_labels=True)
             plt.draw()
             plt.show()
-        except TypeError as e:
-            pass
+        except (TypeError, nx.exception.NetworkXPointlessConcept) as e:
+            print("Erro ao gerar a representação gráfica.")
 
         # NÓ RAIZ.
         print(f"\nNó Raiz: \n{t.get_root().data}")
@@ -195,14 +213,19 @@ class Program:
             print(i, end=" ")
 
         # SUB ÁRVORE DE DETERMINADO NÓ.
-        subTree = input("\n\nSub Árvore e Altura do Nó\n:")
-        print(f"\nSub Árvore do Nó {subTree}:\n")
-        t.get_root().subtree(subTree, t)
-        try:
-            print(f"\nAltura do Nó {subTree}:\n{hh}")
-        except NameError as e:
-            print("Nó não encontrado.")
+        while True:
+            try:
+                sT = input("\n\nSub Árvore e Altura do Nó\n:")
 
+                if (sT == "-1"):
+                    break
+
+                if (sT in _nu):
+                    print(f"\nSub Árvore do Nó {sT}:\n")
+                    t.get_root().subtree(sT, t)
+                    print(f"\nAltura do Nó {sT}:\n{hh}")
+            except KeyboardInterrupt as e:
+                break
 
 if __name__ == "__main__":
     p = Program()
