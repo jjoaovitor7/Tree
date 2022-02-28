@@ -14,9 +14,8 @@ nodes = []
 # REPRESENTAÇÃO GRÁFICA DO NÓ.
 g = nx.Graph()
 
-h = []
-
-_nu = []
+# PARA EVITAR NÓS DUPLICADOS.
+avoidDuplicates = []
 
 
 class Node:
@@ -102,13 +101,11 @@ class Node:
     def subtree(self, target, tree):
         """FUNÇÃO RESPONSÁVEL POR PRINTAR A SUBÁRVORE DE UM DETERMINADO NÓ."""
         if (tree.get_root().data == target):
-            h.append(-1)
             tree.get_root().preorder()
         else:
             if (len(self.children) >= 0):
                 for child in self.children:
                     if (child.data == target):
-                        h.append(-1)
                         child.preorder()
                         print(child.data)
                     else:
@@ -124,8 +121,8 @@ def add_recursive(nA, nB):
             if (nFSS.data == "-1"):
                 break
 
-            if (nFSS.data not in _nu):
-                _nu.append(nFSS.data)
+            if (nFSS.data not in avoidDuplicates):
+                avoidDuplicates.append(nFSS.data)
                 nodes.append((nB.data, nFSS.data))
 
                 nB.add_child(nFSS)
@@ -149,10 +146,10 @@ class Tree:
         # self.root = Node(input("Nó Raiz\n:"))
 
         self.root = Node(str(random.randrange(25)))
-        if (self.root in _nu):
+        if (self.root in avoidDuplicates):
             self.set_root()
         else:
-            _nu.append(self.root.data)
+            avoidDuplicates.append(self.root.data)
 
     def get_root(self):
         """FUNÇÃO RESPONSÁVEL POR OBTER O NÓ RAIZ."""
@@ -168,8 +165,8 @@ class Tree:
                 if (n.data == "-1"):
                     break
 
-                if (n.data not in _nu):
-                    _nu.append(n.data)
+                if (n.data not in avoidDuplicates):
+                    avoidDuplicates.append(n.data)
                     nodes.append((self.root.data, n.data))
                     self.root.add_child(n)
                     add_recursive(self.root, n)
@@ -220,7 +217,7 @@ class Program:
                 if (sT == "-1"):
                     break
 
-                if (sT in _nu):
+                if (sT in avoidDuplicates):
                     print(f"\nSub Árvore do Nó {sT}:\n")
                     t.get_root().subtree(sT, t)
                     print(f"\nAltura do Nó {sT}:\n{hh}")
