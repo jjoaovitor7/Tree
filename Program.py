@@ -81,6 +81,7 @@ class Node:
         """
         FUNÇÃO RESPONSÁVEL POR PRINTAR A ÁRVORE EM PRÉ-ORDEM.
         """
+
         spaces = " " * self.get_level()
         prefix = spaces + "|_" if self.parent != None else ""
 
@@ -95,8 +96,8 @@ class Node:
                 child.preorder()
 
         # VOLTA DA PILHA DA RECURSÃO (CALL STACK).
-        global hh
-        hh = self.get_height()
+        global h
+        h = self.get_height()
 
     def subtree(self, target, tree):
         """FUNÇÃO RESPONSÁVEL POR PRINTAR A SUBÁRVORE DE UM DETERMINADO NÓ."""
@@ -107,7 +108,6 @@ class Node:
                 for child in self.children:
                     if (child.data == target):
                         child.preorder()
-                        print(child.data)
                     else:
                         child.subtree(target, tree)
 
@@ -117,15 +117,16 @@ def add_recursive(nA, nB):
     try:
         while True:
             # nFSS = Node(input(f"Nó Filho de {nB.data}\n:"))
-            nFSS = Node(random.choice([str(random.randrange(25)), "-1"]))
+            nFSS = Node(random.choice([str(random.randrange(50)), "-1"]))
             if (nFSS.data == "-1"):
                 break
 
-            if (nFSS.data not in avoidDuplicates):
+            # len(nB.children) < 2, ÁRVORE BINÁRIA.
+            if (nFSS.data not in avoidDuplicates and len(nB.children) < 2):
                 avoidDuplicates.append(nFSS.data)
                 nodes.append((nB.data, nFSS.data))
-
                 nB.add_child(nFSS)
+
                 add_recursive(nFSS, nA)
             else:
                 add_recursive(nA, nB)
@@ -145,7 +146,8 @@ class Tree:
         """FUNÇÃO RESPONSÁVEL POR SETAR O NÓ RAIZ."""
         # self.root = Node(input("Nó Raiz\n:"))
 
-        self.root = Node(str(random.randrange(25)))
+        self.root = Node(str(random.randrange(50)))
+
         if (self.root in avoidDuplicates):
             self.set_root()
         else:
@@ -160,12 +162,13 @@ class Tree:
         try:
             while True:
                 # n = Node(input(f"Nó Filho de {self.root.data}\n:"))
-                n = Node(random.choice([str(random.randrange(25)), "-1"]))
+                n = Node(random.choice([str(random.randrange(50)), "-1"]))
 
                 if (n.data == "-1"):
                     break
 
-                if (n.data not in avoidDuplicates):
+                # len(self.get_root().children) < 2, ÁRVORE BINÁRIA.
+                if (n.data not in avoidDuplicates and len(self.get_root().children) < 2):
                     avoidDuplicates.append(n.data)
                     nodes.append((self.root.data, n.data))
                     self.root.add_child(n)
@@ -188,7 +191,8 @@ class Program:
         t.set_root()
 
         # GERANDO ÁRVORE E A PRINTANDO EM PRÉ-ORDEM.
-        t.generate().preorder()
+        tg = t.generate()
+        tg.preorder()
 
         # REPRESENTAÇÃO GRÁFICA.
         try:
@@ -220,9 +224,10 @@ class Program:
                 if (sT in avoidDuplicates):
                     print(f"\nSub Árvore do Nó {sT}:\n")
                     t.get_root().subtree(sT, t)
-                    print(f"\nAltura do Nó {sT}:\n{hh}")
+                    print(f"\nAltura do Nó {sT}:\n{h}")
             except KeyboardInterrupt as e:
                 break
+
 
 if __name__ == "__main__":
     p = Program()
