@@ -23,9 +23,9 @@ class Node:
         """
         CONSTRUTOR DA CLASSE.
         """
-        self.data = data
+        self.data = str(data)
         self.children = []
-        self.parent = None
+        self.parent = ""
         self.degree = 0
 
     def add_child(self, child):
@@ -83,7 +83,7 @@ class Node:
         """
 
         spaces = " " * self.get_level()
-        prefix = spaces + "|_" if self.parent != None else ""
+        prefix = spaces + "|_" if self.parent != "" else ""
 
         # CASO O GRAU DÓ NÓ SEJA 0 ELE É UM NÓ FOLHA.
         if (self.degree == 0):
@@ -131,7 +131,7 @@ def add_recursive(nA, nB):
             else:
                 add_recursive(nA, nB)
 
-        if (nA == None):
+        if (nA == ""):
             return
     except KeyboardInterrupt as e:
         # PARA NÃO TER QUE FICAR DIGITANDO -1 TODA HORA.
@@ -140,7 +140,7 @@ def add_recursive(nA, nB):
 
 class Tree:
     def __init__(self):
-        self.root = None
+        self.root = ""
 
     def set_root(self):
         """FUNÇÃO RESPONSÁVEL POR SETAR O NÓ RAIZ."""
@@ -185,20 +185,20 @@ class Program:
         pass
 
     def run(self):
-        t = Tree()
+        self.tree = Tree()
 
         # SETANDO NÓ RAIZ.
-        t.set_root()
+        self.tree.set_root()
 
         # GERANDO ÁRVORE E A PRINTANDO EM PRÉ-ORDEM.
-        tg = t.generate()
+        tg = self.tree.generate()
         tg.preorder()
 
         # REPRESENTAÇÃO GRÁFICA.
         try:
             g.add_edges_from(nodes)
 
-            pos = EoN.hierarchy_pos(g, t.get_root().data)
+            pos = EoN.hierarchy_pos(g, self.tree.get_root().data)
             nx.draw(g, pos=pos, with_labels=True)
             plt.draw()
             plt.show()
@@ -206,7 +206,7 @@ class Program:
             print("Erro ao gerar a representação gráfica.")
 
         # NÓ RAIZ.
-        print(f"\nNó Raiz: \n{t.get_root().data}")
+        print(f"\nNó Raiz: \n{self.tree.get_root().data}")
 
         # NÓ FOLHAS.
         print("\nNós Folhas:")
@@ -223,7 +223,7 @@ class Program:
 
                 if (sT in avoidDuplicates):
                     print(f"\nSub Árvore do Nó {sT}:\n")
-                    t.get_root().subtree(sT, t)
+                    self.tree.get_root().subtree(sT, self.tree)
                     print(f"\nAltura do Nó {sT}:\n{h}")
             except KeyboardInterrupt as e:
                 break
